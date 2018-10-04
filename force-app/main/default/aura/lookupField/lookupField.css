@@ -1,0 +1,33 @@
+.THIS.scrollable{
+    overflow: visible;
+}
+.THIS .slds-icon-utility-search {
+   position:absolute;
+   top: 50%;
+   z-index: 2;
+   border:0;
+   line-height: 1;
+   margin-top: -0.4375rem; 
+}
+.THIS .slds-input-has-icon .slds-icon_right{
+    right: 0.75rem;
+}
+.THIS .slds-pill_container > ul.slds-listbox {
+    width: 100%;
+}
+.THIS .slds-pill_container > ul.slds-listbox li.slds-listbox-item{
+    width: 100%;
+}
+.THIS .slds-pill_container .slds-pill{
+    width: 100%;
+    justify-content: start;  
+}
+.THIS .slds-pill_container .slds-pill__remove{
+    position: absolute;
+    right: 0.3rem;
+}
+.THIS .slds-disabled{
+    transition: border .1s linear, background-color .1s linear;
+    background-color: t(colorBackgroundShade);
+    cursor: not-allowed;
+}

@@ -1,0 +1,92 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" controller="lookupFieldController"  access="global">
+
+    <!--PUBLIC-->    
+    <aura:attribute name="label" type="String" access="public" required="true" description="identifies the label of the lookup field" />
+    <aura:attribute name="object" type="String" access="public" required="true" description="sobject api name" />
+    <aura:attribute name="searchField" type="String" access="public" required="true" description="field api name where the system searchs in "/>
+    <aura:attribute name="placeholder" type="String" access="public" default="Search..." description="placeholder of the input field"/>
+    <aura:attribute name="class" type="String" access="public" description=""/>
+    <aura:attribute name="value"  type="String" access="public" description="Id of the selected/given record" /> 
+    <aura:attribute name="isRequired" type="Boolean" access="public"/>
+    <aura:attribute name="iconName" type="String" access="public" default="standard:record"/>
+    <aura:attribute name="recordLabel" type="String" access="public"/>
+    <aura:attribute name="limit" type="String" access="public" description="SOQL limit" default="5"/>
+    <aura:attribute name="readonly" type="Boolean" access="public" default="false"/>
+    <!--PRIVATE-->
+    <aura:attribute name="isSearching" type="Boolean" access="private" default="false"/>
+    <aura:attribute name="isSelected" type="Boolean"  access="private" default="false"/>
+    <aura:attribute name="records" type="List"  access="private"/>
+    <aura:attribute name="norecords" type="Boolean" access="private" default="false"/>
+    <aura:attribute name="recordIndex" type="Integer" access="private" default="0"/>
+    <!--AURA CMP-->
+    <aura:attribute name="pillContainer" type="Aura.Component[]" access="private"/>
+    <!--EVENT-->
+    <aura:handler name="init" value="{!this}" action="{!c.initAction}"/>
+
+    <ui:scrollerWrapper aura:id="lookup-field" class="{!'slds-form-element ' + v.class }">
+        <label class="slds-form-element__label" for="combobox-id-1"> 
+                <aura:if isTrue="{!v.isRequired}">
+                    <abbr class="slds-required" title="required">*</abbr>
+                </aura:if>{!v.label} 
+        </label>
+        <div class="slds-form-element__control">
+            <div class="pill-wrapper">
+            	{!v.pillContainer}
+            </div>
+            <div aura:id="combobox-container" class="{!'slds-combobox_container' + (v.isSelected ? ' slds-hide' : '' )}"> <!-- + (or(not(empty(v.records)), norecords) ' ' : '')}" -->
+                <div aura:id="combobox-cmp" class="{!'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open'}" 
+                    aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                    <div class="slds-combobox__form-element slds-input-has-icon" role="none">
+                        <input aura:id="input-lookup" 
+                            class="slds-input slds-combobox__input" 
+                            id="combobox-id-1"
+                            aria-autocomplete="list" 
+                            aria-controls="listbox-id-1" 
+                            autocomplete="off" 
+                            role="textbox" type="text" 
+                            placeholder="{!v.placeholder}"
+                            onkeyup="{!c.handleKeyUp}"
+                            value="{!v.value}" 
+                            disabled='{!v.readonly}' 
+                            required='{!v.isRequired}'/>
+
+                        <lightning:icon iconName="utility:search" size="x-small" class="slds-icon_right"/>
+                    </div>
+                    <aura:if isTrue="{!v.records.length gt 0}">
+                        <div id="listbox-id-1" class="slds-dropdown slds-dropdown_fluid" role="listbox">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <aura:iteration items="{!v.records}" var="record" indexVar="ind">
+                                    <li aura:id="record-li" role="presentation" class="slds-listbox__item" 
+                                    data-id="{!record.value}" data-label="{!record.recordLabel}"
+                                    onclick="{!c.invokeSelection}">
+                                        <div id="option1" class="{!'slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta' + 
+                                             ( ind == v.recordIndex ? ' slds-has-focus' : '')}" role="option">
+                                            <lightning:icon iconName="{!v.iconName}" size="small" />
+                                            <span class="slds-media__body slds-p-left_x-small">
+                                                <span class="slds-listbox__option-text slds-listbox__option-text_entity">{!record.recordLabel}</span>
+                                            </span>
+                                        </div>
+                                    </li>
+                                </aura:iteration>
+                            </ul>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.norecords}">
+                        <div aura:id="no-record" id="listbox-id-1" class="slds-dropdown slds-dropdown_fluid" role="listbox">
+                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                <li role="presentation" class="slds-listbox__item">
+                                    <div id="option1" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option"> 
+                                        <lightning:icon iconName="utility:search" size="x-small"/>                         
+                                        <span class="slds-media__body slds-p-left_large">
+                                            <span class="slds-listbox__option-text slds-listbox__option-text_entity"> No records found. </span>
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </aura:if>    
+                </div>
+            </div> 
+        </div>
+    </ui:scrollerWrapper>
+</aura:component>
